@@ -1,0 +1,3 @@
+[submodule "eyrc-24-25-logistic-cobot"]
+	path = eyrc-24-25-logistic-cobot
+	url = https://github.com/eYantra-Robotics-Competition/eyrc-24-25-logistic-cobot.git
