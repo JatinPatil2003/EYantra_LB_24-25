@@ -1,4 +1,4 @@
-# EYantra_LB_24-25
+# EYantra_LB#1264_24-25
 
 ## Setup Instructions
 
@@ -6,6 +6,10 @@ Run the following command to clone repo with all submodules
 
 ```bash
 git clone https://github.com/JatinPatil2003/EYantra_LB_24-25.git --recursive
+```
+if you have ssh keys setuped on your machine
+```bash
+git clone git@github.com:JatinPatil2003/EYantra_LB_24-25.git --recursive
 ```
 
 ## Usage Instructions
