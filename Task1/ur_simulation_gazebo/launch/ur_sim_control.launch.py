@@ -163,7 +163,8 @@ def launch_setup(context, *args, **kwargs):
         package="gazebo_ros",
         executable="spawn_entity.py",
         name="spawn_ur",
-        arguments=["-entity", "ur", "-topic", "robot_description"],
+        arguments=["-entity", "ur", "-topic", "robot_description",
+                   '-x', '1.6', '-y', '-2.4', '-z', '0.58', '-Y', '3.14'],
         output="screen",
     )
 
