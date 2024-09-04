@@ -173,7 +173,7 @@ def launch_setup(context, *args, **kwargs):
         delay_rviz_after_joint_state_broadcaster_spawner,
         initial_joint_controller_spawner_stopped,
         initial_joint_controller_spawner_started,
-        gazebo,
+        # gazebo,
         gazebo_spawn_robot,
     ]
 

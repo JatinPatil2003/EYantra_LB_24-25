@@ -46,6 +46,11 @@ def generate_launch_description():
         )
     )
 
+    camera = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('ur_description'), 'launch', 'camera.launch.py'),
+        )
+    )
 
     static_transform = launch_ros.actions.Node(
         package='tf2_ros',
@@ -65,6 +70,6 @@ def generate_launch_description():
                                             description='Flag to enable use_sim_time'),
         start_world,
         static_transform,
+        camera,
         spawner_box
-
     ])
