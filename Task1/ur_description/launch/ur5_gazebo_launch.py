@@ -53,7 +53,7 @@ def generate_launch_description():
         launch.actions.DeclareLaunchArgument(name='use_sim_time', default_value='True',
                                             description='Flag to enable use_sim_time'),
         start_world,
-        # spawn_arm
+        spawn_arm
     ])
 
 
