@@ -31,14 +31,14 @@
 
 import os
 
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.actions import OpaqueFunction
+from launch.conditions import IfCondition
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from ur_moveit_config.launch_common import load_yaml
-
-from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
-from launch.conditions import IfCondition
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 
 
 def launch_setup(context, *args, **kwargs):
@@ -53,7 +53,6 @@ def launch_setup(context, *args, **kwargs):
     description_package = LaunchConfiguration("description_package")
     description_file = LaunchConfiguration("description_file")
     moveit_config_package = LaunchConfiguration("moveit_config_package")
-    moveit_joint_limits_file = LaunchConfiguration("moveit_joint_limits_file")
     moveit_config_file = LaunchConfiguration("moveit_config_file")
     warehouse_sqlite_path = LaunchConfiguration("warehouse_sqlite_path")
     prefix = LaunchConfiguration("prefix")
@@ -147,12 +146,9 @@ def launch_setup(context, *args, **kwargs):
         [FindPackageShare(moveit_config_package), "config", "kinematics.yaml"]
     )
 
-    robot_description_planning = {
-        "robot_description_planning": load_yaml(
-            str(moveit_config_package.perform(context)),
-            os.path.join("config", str(moveit_joint_limits_file.perform(context))),
-        )
-    }
+    # robot_description_planning = {
+    # "robot_description_planning": load_yaml_abs(str(joint_limit_params.perform(context)))
+    # }
 
     # Planning Configuration
     ompl_planning_pipeline_config = {
@@ -206,7 +202,7 @@ def launch_setup(context, *args, **kwargs):
             robot_description,
             robot_description_semantic,
             robot_description_kinematics,
-            robot_description_planning,
+            # robot_description_planning,
             ompl_planning_pipeline_config,
             trajectory_execution,
             moveit_controllers,
@@ -232,7 +228,7 @@ def launch_setup(context, *args, **kwargs):
             robot_description_semantic,
             ompl_planning_pipeline_config,
             robot_description_kinematics,
-            robot_description_planning,
+            # robot_description_planning,
             warehouse_ros_config,
         ],
     )
@@ -301,8 +297,8 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "description_package",
             default_value="ur_description",
-            description="Description package with robot URDF/XACRO files. Usually the argument "
-            "is not set, it enables use of a custom description.",
+            description="Description package with robot URDF/XACRO files. Usually the argument \
+        is not set, it enables use of a custom description.",
         )
     )
     declared_arguments.append(
@@ -316,8 +312,8 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "moveit_config_package",
             default_value="ur_moveit_config",
-            description="MoveIt config package with robot SRDF/XACRO files. Usually the argument "
-            "is not set, it enables use of a custom moveit config.",
+            description="MoveIt config package with robot SRDF/XACRO files. Usually the argument \
+        is not set, it enables use of a custom moveit config.",
         )
     )
     declared_arguments.append(
@@ -325,13 +321,6 @@ def generate_launch_description():
             "moveit_config_file",
             default_value="ur.srdf.xacro",
             description="MoveIt SRDF/XACRO description file with the robot.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "moveit_joint_limits_file",
-            default_value="joint_limits.yaml",
-            description="MoveIt joint limits that augment or override the values from the URDF robot_description.",
         )
     )
     declared_arguments.append(
@@ -344,7 +333,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "use_sim_time",
-            default_value="false",
+            default_value="true",
             description="Make MoveIt to use simulation time. This is needed for the trajectory planing in simulation.",
         )
     )
@@ -352,9 +341,9 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "prefix",
             default_value='""',
-            description="Prefix of the joint names, useful for "
-            "multi-robot setup. If changed than also joint names in the controllers' configuration "
-            "have to be updated.",
+            description="Prefix of the joint names, useful for \
+        multi-robot setup. If changed than also joint names in the controllers' configuration \
+        have to be updated.",
         )
     )
     declared_arguments.append(

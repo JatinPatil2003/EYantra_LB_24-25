@@ -41,6 +41,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+import os
+from ament_index_python.packages import get_package_share_directory
 
 
 def launch_setup(context, *args, **kwargs):
@@ -75,6 +77,7 @@ def launch_setup(context, *args, **kwargs):
             " ",
             PathJoinSubstitution(
                 [FindPackageShare(description_package), "urdf", description_file]
+                #  [FindPackageShare("ur5_moveit"), "config", "ur5.urdf.xacro"]
             ),
             " ",
             "safety_limits:=",
@@ -101,13 +104,14 @@ def launch_setup(context, *args, **kwargs):
             initial_joint_controllers,
         ]
     )
-    robot_description = {"robot_description": robot_description_content}
+    robot_description_arm = {"robot_description": robot_description_content}
 
-    robot_state_publisher_node = Node(
+    robot_state_publisher_node_ur5 = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[{"use_sim_time": True}, robot_description],
+        parameters=[{"use_sim_time": True}, robot_description_arm],
+        remappings=[('robot_description', 'robot_description_ur5')]
     )
 
     rviz_node = Node(
@@ -163,22 +167,75 @@ def launch_setup(context, *args, **kwargs):
         package="gazebo_ros",
         executable="spawn_entity.py",
         name="spawn_ur",
-        arguments=["-entity", "ur", "-topic", "robot_description",
-                   '-x', '1.6', '-y', '-2.4', '-z', '0.58', '-Y', '3.14'],
+        arguments=['-entity', 'ur5', '-topic', 'robot_description_ur5', '-x', '1.6', '-y', '-2.4', '-z', '0.58', '-Y', '3.14'],
         output="screen",
     )
 
+    start_world = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('ur_description'), 'launch', 'start_ur_world_launch.py'),
+        )
+    )
+
+    
+    
+
+    static_transform = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_transform_publisher',
+        # arguments = ["1.6", "-2.4", "-0.8", "3.14", "0", "0", "world", "odom"],
+        arguments = ["0.0", "0.0", "0.0", "0.0", "0", "0", "world", "odom"],
+        output='screen')
+    
+    static_transform_1 = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_transform_publisher',
+        # arguments = ["1.6", "-2.4", "-0.8", "3.14", "0", "0", "world", "odom"],
+        arguments = ["0.0", "0.0", "0.0", "0.0", "0", "0", "odom", "base_link"],
+        output='screen')
+    
+    
+
+    #  Controller manager for realtime interactions
+
+    # ros2_control_node = Node(
+    #     package="controller_manager",
+    #     executable="ros2_control_node",
+    #     name="control_node_ros2",
+    #     parameters= [
+    #         {'robot_description': robot_description_arm},
+    #         os.path.join(get_package_share_directory("ur5_moveit"), "config", "ros_controllers.yaml")
+    #     ],
+    #     output="screen",
+    # )
+
+
     nodes_to_start = [
-        robot_state_publisher_node,
+        # start_world,
+        robot_state_publisher_node_ur5,
         joint_state_broadcaster_spawner,
         delay_rviz_after_joint_state_broadcaster_spawner,
         initial_joint_controller_spawner_stopped,
         initial_joint_controller_spawner_started,
-        # gazebo,
         gazebo_spawn_robot,
+        static_transform,
+
     ]
 
     return nodes_to_start
+
+
+
+
+
+
+
+
+
+
+
 
 
 def generate_launch_description():
@@ -240,7 +297,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "description_file",
-            default_value="ur.urdf.xacro",
+            default_value="ur5_arm.urdf.xacro",
             description="URDF/XACRO description file with the robot.",
         )
     )
@@ -268,7 +325,7 @@ def generate_launch_description():
         )
     )
     declared_arguments.append(
-        DeclareLaunchArgument("launch_rviz", default_value="true", description="Launch RViz?")
+        DeclareLaunchArgument("launch_rviz", default_value="false", description="Launch RViz?")
     )
     declared_arguments.append(
         DeclareLaunchArgument(

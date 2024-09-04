@@ -69,7 +69,7 @@ def generate_launch_description():
           default_value=[os.path.join(pkg_models_dir, 'worlds', 'eyantra_warehouse_task0.world'), ''], #eyantra_warehouse_task2a.world  Change name of world file if required.
           description='SDF world file'),
         gazebo,
-        # spawner_box
+        spawner_box
         # ExecuteProcess(cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so'], output='screen'),
     ])
 

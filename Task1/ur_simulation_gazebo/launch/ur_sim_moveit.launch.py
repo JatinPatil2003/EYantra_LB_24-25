@@ -54,7 +54,7 @@ def launch_setup(context, *args, **kwargs):
             [FindPackageShare("ur_simulation_gazebo"), "/launch", "/ur_sim_control.launch.py"]
         ),
         launch_arguments={
-            "ur_type": ur_type,
+            "ur_type": "ur5", #ur_type,
             "safety_limits": safety_limits,
             "runtime_config_package": runtime_config_package,
             "controllers_file": controllers_file,
@@ -68,6 +68,7 @@ def launch_setup(context, *args, **kwargs):
     ur_moveit_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             [FindPackageShare("ur_moveit_config"), "/launch", "/ur_moveit.launch.py"]
+            #  [FindPackageShare("ur_simulation_gazebo"), "/launch", "/ur_moveit.launch.py"]
         ),
         launch_arguments={
             "ur_type": ur_type,

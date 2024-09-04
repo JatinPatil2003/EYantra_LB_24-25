@@ -398,13 +398,13 @@
 
     <!-- newly added by me -->
 
-    <!-- <joint name="${tf_prefix}ee_fixed_joint" type="fixed">
+    <joint name="${tf_prefix}ee_fixed_joint" type="fixed">
       <parent link="${tf_prefix}wrist_3_link" />
       <child link = "${tf_prefix}ee_link" />
       <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
-    </joint> -->
+    </joint>
 
-    <!-- <link name="${tf_prefix}ee_link">
+    <link name="${tf_prefix}ee_link">
     <visual>
       <geometry>
         <cylinder length="0.025" radius="0.02"/>
@@ -422,7 +422,7 @@
       <mass value="0.01"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
-    </link> -->
+    </link>
 
     <!-- End of newly added my me      -->
 
