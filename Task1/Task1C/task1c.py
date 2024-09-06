@@ -124,8 +124,8 @@ def main(args=None):
         node.get_logger().info("At Home")
         # time.sleep(2)
 
-        node.move_arm_angles(BC_init_angles)
-        node.get_logger().info("At BC_init")
+        # node.move_arm_angles(BC_init_angles)
+        # node.get_logger().info("At BC_init")
         node.move_arm_angles(B_angle)
         node.get_logger().info("At B")
         # time.sleep(1)
@@ -150,8 +150,8 @@ def main(args=None):
         node.get_logger().info("At Home")
         # time.sleep(2)
 
-        node.move_arm_angles(BC_init_angles)
-        node.get_logger().info("At BC_init")
+        # node.move_arm_angles(BC_init_angles)
+        # node.get_logger().info("At BC_init")
         node.move_arm_angles(C_angle)
         node.get_logger().info("At C")
         # time.sleep(1)
@@ -174,8 +174,8 @@ def main(args=None):
         node.get_logger().info("At Home")
         # time.sleep(2)
 
-        node.move_arm_angles(A_init_angles)
-        node.get_logger().info("At A_init")
+        # node.move_arm_angles(A_init_angles)
+        # node.get_logger().info("At A_init")
         node.move_arm_angles(A_angle)
         node.get_logger().info("At A")
         # time.sleep(1)

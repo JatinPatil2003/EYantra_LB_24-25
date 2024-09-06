@@ -23,8 +23,8 @@ class ArmController(Node):
         self.timer = self.create_timer(0.1, self.control_loop)  # 10 Hz
 
         # Goal position and orientation (you can change these to desired values)
-        self.goal_position = np.array([0.20, -0.47, 0.65])  # Example goal in meters
-        self.goal_orientation = [1.57, 0.0, 0.0]  # Example orientation (Euler angles)
+        self.goal_position = np.array([0.0, 0.0, 0.65])  # Example goal in meters
+        self.goal_orientation = [0.0, 0.0, 0.0]  # Example orientation (Euler angles)
 
         self.linear_threshold = 0.05  # Threshold for linear distance to the goal
         self.angular_threshold = 0.1  # Threshold for angular distance to the goal
@@ -51,14 +51,14 @@ class ArmController(Node):
             angular_error = np.array(self.goal_orientation) - np.array(current_orientation)
 
             # Calculate linear and angular velocities based on errors (simple proportional control)
-            linear_velocity = position_error * 0.5  # Scale by a constant factor
-            angular_velocity = angular_error * 0.5  # Scale by a constant factor
+            linear_velocity = position_error * 5.0  # Scale by a constant factor
+            angular_velocity = angular_error * 5.0  # Scale by a constant factor
 
             # Check if the robot is within the threshold to stop
-            if np.linalg.norm(position_error) < self.linear_threshold:
-                linear_velocity = np.zeros(3)
-            if np.linalg.norm(angular_error) < self.angular_threshold:
-                angular_velocity = np.zeros(3)
+            # if np.linalg.norm(position_error) < self.linear_threshold:
+            #     linear_velocity = np.zeros(3)
+            # if np.linalg.norm(angular_error) < self.angular_threshold:
+            #     angular_velocity = np.zeros(3)
 
             # Create a TwistStamped message
             twist_msg = TwistStamped()
