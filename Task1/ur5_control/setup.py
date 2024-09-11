@@ -22,6 +22,7 @@ setup(
     entry_points={
         'console_scripts': [
         "task1b = ur5_control.task1b_boiler_plate:main",
+        "task1c = ur5_control.task1c:main",
         ],
     },
 )
