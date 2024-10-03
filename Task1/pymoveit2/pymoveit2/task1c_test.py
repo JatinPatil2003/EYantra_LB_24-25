@@ -26,7 +26,7 @@ class ArmMovement(Node):
             end_effector_name=ur5.end_effector_name(),
             group_name=ur5.MOVE_GROUP_ARM,
             callback_group=self.callback_group,
-            execute_via_moveit=True,
+            execute_via_moveit=False,
         )
 
         self.cmd_vel_publisher = self.create_publisher(TwistStamped, '/servo_node/delta_twist_cmds', 10)
@@ -117,83 +117,86 @@ def main(args=None):
     # -A= box1, B= box49, C = box3
 
     try:
-        # B Box Pick n Place
-        #####################################################################
+        node.move_servo([0.0,0.0,0.0,10.0,0.0,0.0])
 
-        node.move_arm_angles(home_angles)
-        node.get_logger().info("At Home")
-        # time.sleep(2)
+    # try:
+    #     # B Box Pick n Place
+    #     #####################################################################
 
-        # node.move_arm_angles(BC_init_angles)
-        # node.get_logger().info("At BC_init")
-        # node.move_arm_angles(B_angle)
-        node.move_arm_sequence(B[0], B[1], False)
-        node.get_logger().info("At B")
-        # time.sleep(1)
-        node.magnet_on("box49")
-        # time.sleep(0.5)
+    #     node.move_arm_angles(home_angles)
+    #     node.get_logger().info("At Home")
+    #     # time.sleep(2)
 
-        node.move_arm_angles(home_angles)
-        node.get_logger().info("At Home")
-        # time.sleep(2)
+    #     # node.move_arm_angles(BC_init_angles)
+    #     # node.get_logger().info("At BC_init")
+    #     # node.move_arm_angles(B_angle)
+    #     node.move_arm_sequence(B[0], B[1], False)
+    #     node.get_logger().info("At B")
+    #     # time.sleep(1)
+    #     node.magnet_on("box49")
+    #     # time.sleep(0.5)
 
-        node.move_arm_angles(D_1_angle)
-        node.get_logger().info("At D")
-        # time.sleep(1)
-        node.magnet_off("box49")
-        # time.sleep(0.5)
+    #     # node.move_arm_angles(home_angles)
+    #     # node.get_logger().info("At Home")
+    #     # time.sleep(2)
+
+    #     node.move_arm_angles(D_1_angle)
+    #     node.get_logger().info("At D")
+    #     # time.sleep(1)
+    #     node.magnet_off("box49")
+    #     # time.sleep(0.5)
 
 
-        # C Box Pick n Place
-        #####################################################################
+    #     # C Box Pick n Place
+    #     #####################################################################
 
-        node.move_arm_angles(home_angles)
-        node.get_logger().info("At Home")
-        # time.sleep(2)
+    #     # node.move_arm_angles(home_angles)
+    #     # node.get_logger().info("At Home")
+    #     # time.sleep(2)
 
-        # node.move_arm_angles(BC_init_angles)
-        # node.get_logger().info("At BC_init")
-        # node.move_arm_angles(C_angle)
-        node.move_arm_sequence(C[0], C[1], False)
-        node.get_logger().info("At C")
-        # time.sleep(1)
-        node.magnet_on("box3")
-        # time.sleep(0.5)
+    #     # node.move_arm_angles(BC_init_angles)
+    #     # node.get_logger().info("At BC_init")
+    #     # node.move_arm_angles(C_angle)
+    #     node.move_arm_sequence(C[0], C[1], False)
+    #     node.get_logger().info("At C")
+    #     # time.sleep(1)
+    #     node.magnet_on("box3")
+    #     # time.sleep(0.5)
 
-        node.move_arm_angles(home_angles)
-        node.get_logger().info("At Home")
-        # time.sleep(2)
+    #     # node.move_arm_angles(home_angles)
+    #     # node.get_logger().info("At Home")
+    #     # time.sleep(2)
 
-        node.move_arm_angles(D_2_angle)
-        node.get_logger().info("At D")
-        # time.sleep(1)
-        node.magnet_off("box3")
-        # time.sleep(0.5)
+    #     node.move_arm_angles(D_2_angle)
+    #     node.get_logger().info("At D")
+    #     # time.sleep(1)
+    #     node.magnet_off("box3")
+    #     # time.sleep(0.5)
 
-        # A Box Pick n Place
-        #####################################################################
-        node.move_arm_angles(home_angles)
-        node.get_logger().info("At Home")
-        # time.sleep(2)
+    #     # A Box Pick n Place
+    #     #####################################################################
+    #     # node.move_arm_angles(home_angles)
+    #     # node.get_logger().info("At Home")
+    #     # time.sleep(2)
 
-        # node.move_arm_angles(A_init_angles)
-        # node.get_logger().info("At A_init")
-        # node.move_arm_angles(A_angle)
-        node.move_arm_sequence(A[0], A[1], False)
-        node.get_logger().info("At A")
-        # time.sleep(1)
-        node.magnet_on("box1")
-        # time.sleep(0.5)
+    #     # node.move_arm_angles(A_init_angles)
+    #     # node.get_logger().info("At A_init")
+    #     # node.move_arm_angles(A_angle)
+    #     node.move_arm_sequence(A[0], A[1], False)
+    #     node.get_logger().info("At A")
+    #     # time.sleep(1)
+    #     node.magnet_on("box1")
+    #     # time.sleep(0.5)
 
-        node.move_arm_angles(home_angles)
-        node.get_logger().info("At Home")
-        # time.sleep(2)
+    #     # node.move_arm_angles(home_angles)
+    #     # node.get_logger().info("At Home")
+    #     # time.sleep(2)
 
-        node.move_arm_angles(D_1_angle)
-        node.get_logger().info("At D")
-        # time.sleep(1)
-        node.magnet_off("box1")
-        # time.sleep(0.5)
+    #     node.move_arm_angles(D_1_angle)
+    #     node.get_logger().info("At D")
+    #     # time.sleep(1)
+    #     node.magnet_off("box1")
+    #     # time.sleep(0.5)
 
         
 

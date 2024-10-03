@@ -26,7 +26,7 @@ class ArmMovement(Node):
             end_effector_name=ur5.end_effector_name(),
             group_name=ur5.MOVE_GROUP_ARM,
             callback_group=self.callback_group,
-            execute_via_moveit=False,
+            execute_via_moveit=True,
         )
 
         self.cmd_vel_publisher = self.create_publisher(TwistStamped, '/servo_node/delta_twist_cmds', 10)
@@ -132,8 +132,8 @@ def main(args=None):
         node.magnet_on("box49")
         # time.sleep(0.5)
 
-        # node.move_arm_angles(home_angles)
-        # node.get_logger().info("At Home")
+        node.move_arm_angles(home_angles)
+        node.get_logger().info("At Home")
         # time.sleep(2)
 
         node.move_arm_angles(D_1_angle)
@@ -146,8 +146,8 @@ def main(args=None):
         # C Box Pick n Place
         #####################################################################
 
-        # node.move_arm_angles(home_angles)
-        # node.get_logger().info("At Home")
+        node.move_arm_angles(home_angles)
+        node.get_logger().info("At Home")
         # time.sleep(2)
 
         # node.move_arm_angles(BC_init_angles)
@@ -158,8 +158,8 @@ def main(args=None):
         node.magnet_on("box3")
         # time.sleep(0.5)
 
-        # node.move_arm_angles(home_angles)
-        # node.get_logger().info("At Home")
+        node.move_arm_angles(home_angles)
+        node.get_logger().info("At Home")
         # time.sleep(2)
 
         node.move_arm_angles(D_2_angle)
@@ -170,8 +170,8 @@ def main(args=None):
 
         # A Box Pick n Place
         #####################################################################
-        # node.move_arm_angles(home_angles)
-        # node.get_logger().info("At Home")
+        node.move_arm_angles(home_angles)
+        node.get_logger().info("At Home")
         # time.sleep(2)
 
         # node.move_arm_angles(A_init_angles)
@@ -182,8 +182,8 @@ def main(args=None):
         node.magnet_on("box1")
         # time.sleep(0.5)
 
-        # node.move_arm_angles(home_angles)
-        # node.get_logger().info("At Home")
+        node.move_arm_angles(home_angles)
+        node.get_logger().info("At Home")
         # time.sleep(2)
 
         node.move_arm_angles(D_1_angle)

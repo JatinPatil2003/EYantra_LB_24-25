@@ -71,8 +71,8 @@
           <param name="max">{2*pi}</param>
         </command_interface>
         <command_interface name="velocity">
-          <param name="min">-3.15</param>
-          <param name="max">3.15</param>
+          <param name="min">-10.0</param>
+          <param name="max">10.0</param>
         </command_interface>
         <state_interface name="position">
           <!-- initial position for the FakeSystem and simulation -->
@@ -87,8 +87,8 @@
           <param name="max">{2*pi}</param>
         </command_interface>
         <command_interface name="velocity">
-          <param name="min">-3.15</param>
-          <param name="max">3.15</param>
+          <param name="min">-10.0</param>
+          <param name="max">10.0</param>
         </command_interface>
         <state_interface name="position">
           <!-- initial position for the FakeSystem and simulation -->
@@ -103,8 +103,8 @@
           <param name="max">{pi}</param>
         </command_interface>
         <command_interface name="velocity">
-          <param name="min">-3.15</param>
-          <param name="max">3.15</param>
+          <param name="min">-10.0</param>
+          <param name="max">10.0</param>
         </command_interface>
         <state_interface name="position">
           <!-- initial position for the FakeSystem and simulation -->
@@ -119,8 +119,8 @@
           <param name="max">{2*pi}</param>
         </command_interface>
         <command_interface name="velocity">
-          <param name="min">-3.2</param>
-          <param name="max">3.2</param>
+          <param name="min">-10.0</param>
+          <param name="max">10.0</param>
         </command_interface>
         <state_interface name="position">
           <!-- initial position for the FakeSystem and simulation -->
@@ -135,8 +135,8 @@
           <param name="max">{2*pi}</param>
         </command_interface>
         <command_interface name="velocity">
-          <param name="min">-3.2</param>
-          <param name="max">3.2</param>
+          <param name="min">-10.0</param>
+          <param name="max">10.0</param>
         </command_interface>
         <state_interface name="position">
           <!-- initial position for the FakeSystem and simulation -->
@@ -151,8 +151,8 @@
           <param name="max">{2*pi}</param>
         </command_interface>
         <command_interface name="velocity">
-          <param name="min">-3.2</param>
-          <param name="max">3.2</param>
+          <param name="min">-10.0</param>
+          <param name="max">10.0</param>
         </command_interface>
         <state_interface name="position">
           <!-- initial position for the FakeSystem and simulation -->
