@@ -110,18 +110,42 @@ def main(args=None):
     # BC = [0.0, -102, 83, -72, -90, 180]
     B_angle = [-0.45, -0.49, 1.15, -2.22, -1.57, 2.69]
     # B = [-26, -28, 66, -127, -90, 154]
-    C_angle = [0.37, -0.31, 0.75, -2.01, -1.57, 3.49]
+    C_angle = [0.37, -0.31, 0.75, -2.01, -1.57, -2.69]
     # C = [21, -18, 43, -115, -90, -160]
 
     
     # -A= box1, B= box49, C = box3
 
     try:
+        # A Box Pick n Place
+        #####################################################################
+        # node.move_arm_angles(home_angles)
+        # node.get_logger().info("At Home")
+        # time.sleep(2)
+
+        # node.move_arm_angles(A_init_angles)
+        # node.get_logger().info("At A_init")
+        node.move_arm_angles(A_angle)
+        node.get_logger().info("At A")
+        # time.sleep(1)
+        node.magnet_on("box1")
+        # time.sleep(0.5)
+
+        # node.move_arm_angles(home_angles)
+        # node.get_logger().info("At Home")
+        # time.sleep(2)
+
+        node.move_arm_angles(D_1_angle)
+        node.get_logger().info("At D")
+        # time.sleep(1)
+        node.magnet_off("box1")
+        # time.sleep(0.5)
+
         # B Box Pick n Place
         #####################################################################
 
-        node.move_arm_angles(home_angles)
-        node.get_logger().info("At Home")
+        # node.move_arm_angles(home_angles)
+        # node.get_logger().info("At Home")
         # time.sleep(2)
 
         # node.move_arm_angles(BC_init_angles)
@@ -136,7 +160,7 @@ def main(args=None):
         # node.get_logger().info("At Home")
         # time.sleep(2)
 
-        node.move_arm_angles(D_1_angle)
+        node.move_arm_angles(D_2_angle)
         node.get_logger().info("At D")
         # time.sleep(1)
         node.magnet_off("box49")
@@ -168,29 +192,7 @@ def main(args=None):
         node.magnet_off("box3")
         # time.sleep(0.5)
 
-        # A Box Pick n Place
-        #####################################################################
-        # node.move_arm_angles(home_angles)
-        # node.get_logger().info("At Home")
-        # time.sleep(2)
-
-        # node.move_arm_angles(A_init_angles)
-        # node.get_logger().info("At A_init")
-        node.move_arm_angles(A_angle)
-        node.get_logger().info("At A")
-        # time.sleep(1)
-        node.magnet_on("box1")
-        # time.sleep(0.5)
-
-        # node.move_arm_angles(home_angles)
-        # node.get_logger().info("At Home")
-        # time.sleep(2)
-
-        node.move_arm_angles(D_1_angle)
-        node.get_logger().info("At D")
-        # time.sleep(1)
-        node.magnet_off("box1")
-        # time.sleep(0.5)
+        
 
         
 
