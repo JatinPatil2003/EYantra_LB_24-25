@@ -43,6 +43,8 @@ from scipy.spatial.transform import Rotation as R
 from sensor_msgs.msg import CompressedImage, Image
 import tf_transformations as tf
 
+from std_msgs.msg import String
+
 
 ##################### FUNCTION DEFINITIONS #######################
 
@@ -201,7 +203,7 @@ class aruco_tf(Node):
         self.listener = tf2_ros.TransformListener(self.tf_buffer, self)
         self.br = tf2_ros.TransformBroadcaster(self)                                    # object as transform broadcaster to send transform wrt some frame_id
         self.timer = self.create_timer(image_processing_rate, self.process_image)       # creating a timer based function which gets called on every 0.2 seconds (as defined by 'image_processing_rate' variable)
-        
+        self.aruco_string_pub = self.create_publisher(String, '/detected_aruco', 10)
         self.cv_image = None                                                            # colour raw image variable (from colorimagecb())
         self.depth_image = None 
         self.mat_base_to_laser = None                                                        # depth image variable (from depthimagecb())
@@ -273,6 +275,8 @@ class aruco_tf(Node):
 
         if ids is None or self.mat_base_to_laser is None:
             return
+        
+        self.aruco_string_pub.publish(String(data=str(ids)))
             
         for i, marker_id in enumerate(ids):
             cX, cY = center_aruco_list[i]
@@ -310,7 +314,7 @@ class aruco_tf(Node):
         t = matrixToTransform(mat_base_to_box_tf)
         quat = t.transform.rotation
         euler = list(tf.euler_from_quaternion((quat.x, quat.y, quat.z, quat.w)))
-        euler[2] += math.pi
+        euler[0] += math.pi
         quat = tf.quaternion_from_euler(*tuple(euler))
 
         t.transform.rotation.x = quat[0]
