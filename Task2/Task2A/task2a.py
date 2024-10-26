@@ -51,7 +51,6 @@ def main(args=None):
     node.get_logger().info("Initial Rotated")
 
     while len(aruco_ids) > 0:
-    
         id = aruco_ids[0]
         node.get_logger().info(f'Moving to ID: {id}')
         dir = go_to(f'obj_{id}', node, servoing_client, tf_utils)
@@ -66,15 +65,14 @@ def main(args=None):
             # move_cmd_vel(0.5, -0.5, 0.2, node, servoing_client)
             go_to(f'drop', node, servoing_client, tf_utils)
             # time.sleep(2)
-            # move_cmd_vel(0.0, 0.0, -0.25, node, servoing_client)
+            move_cmd_vel(0.0, 0.0, -0.25, node, servoing_client)
             # time.sleep(1)
             node.get_logger().info("Magnet Off")
             ur_move_client.magnet_off(f'box{id}')
-            time.sleep(1.0)
             node.get_logger().info("Box Remove")
             servoing_client.detach_box(f'box{id}')
             # time.sleep(2)
-            # move_cmd_vel(0.0, 0.0, 0.3, node, servoing_client)
+            move_cmd_vel(0.0, 0.0, 0.3, node, servoing_client)
             # time.sleep(2)
 
         else:
@@ -86,16 +84,15 @@ def main(args=None):
             # move_cmd_vel(0.5, 0.5, 0.2, node, servoing_client)
             go_to(f'drop', node, servoing_client, tf_utils)
             # time.sleep(2)
-            # move_cmd_vel(0.0, 0.0, -0.25, node, servoing_client)
+            move_cmd_vel(0.0, 0.0, -0.25, node, servoing_client)
 
             # time.sleep(1)
             node.get_logger().info("Magnet Off")
             ur_move_client.magnet_off(f'box{id}')
-            time.sleep(1.0)
             node.get_logger().info("Box Remove")
             servoing_client.detach_box(f'box{id}')
             # time.sleep(2)
-            # move_cmd_vel(0.0, 0.0, 0.3, node, servoing_client)
+            move_cmd_vel(0.0, 0.0, 0.3, node, servoing_client)
             # time.sleep(2)
         
         done_list.append(id)
@@ -117,11 +114,11 @@ def main(args=None):
 def move_cmd_vel(x, y, z, node, servoing_client):
     prevtime = time.time()
 
-    while time.time() - prevtime < 1.0:
+    while time.time() - prevtime < 3.0:
         twist = TwistStamped()
-        twist.twist.linear.x = x * 3.0
-        twist.twist.linear.y = y * 3.0
-        twist.twist.linear.z = z * 3.0
+        twist.twist.linear.x = x
+        twist.twist.linear.y = y
+        twist.twist.linear.z = z
         twist.header.stamp = node.get_clock().now().to_msg()
         servoing_client.twist_publisher.publish(twist)
     print('stop')
@@ -129,9 +126,9 @@ def move_cmd_vel(x, y, z, node, servoing_client):
 def initaial_rotate(node, servoing_client):
     prevtime = time.time()
 
-    while time.time() - prevtime < 2.0:
+    while time.time() - prevtime < 3.0:
         twist = TwistStamped()
-        twist.twist.angular.y = math.pi * 1.5 / 2
+        twist.twist.angular.y = math.pi / 2
 
         twist.header.stamp = node.get_clock().now().to_msg()
         servoing_client.twist_publisher.publish(twist)
@@ -147,11 +144,11 @@ def go_to(box_name, node, servoing_client, tf_utils):
     translation_ = translation
     node.get_logger().info("Moving EEF...")
     prevtime = time.time()
-    while not abs(translation[0]) < 0.03 and not abs(translation[1]) < 0.03 and time.time() - prevtime < 3.5:
+    while not abs(translation[0]) < 0.04 and not abs(translation[1]) < 0.04 and time.time() - prevtime < 3.0:
         twist = TwistStamped()
-        twist.twist.linear.x = translation_[0] 
-        twist.twist.linear.y = translation_[1] 
-        twist.twist.linear.z = translation_[2] 
+        twist.twist.linear.x = translation_[0]
+        twist.twist.linear.y = translation_[1]
+        twist.twist.linear.z = translation_[2]
 
         twist.header.stamp = node.get_clock().now().to_msg()
         servoing_client.twist_publisher.publish(twist)
@@ -172,3 +169,4 @@ def go_to(box_name, node, servoing_client, tf_utils):
 
 if __name__ == "__main__":
     main()
+

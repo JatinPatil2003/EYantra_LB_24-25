@@ -315,6 +315,7 @@ class aruco_tf(Node):
         quat = t.transform.rotation
         euler = list(tf.euler_from_quaternion((quat.x, quat.y, quat.z, quat.w)))
         euler[0] += math.pi
+        euler[2] += math.pi
         quat = tf.quaternion_from_euler(*tuple(euler))
 
         t.transform.rotation.x = quat[0]
