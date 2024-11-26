@@ -36,7 +36,7 @@ class TF:
         self.tf_broadcast.sendTransform(transform=transform)
         transform.transform.translation.x = 0.5
         transform.transform.translation.y = 0.0
-        transform.transform.translation.z = 0.25
+        transform.transform.translation.z = 0.45
         transform.child_frame_id = 'drop'
         self.tf_broadcast.sendTransform(transform=transform)
 
