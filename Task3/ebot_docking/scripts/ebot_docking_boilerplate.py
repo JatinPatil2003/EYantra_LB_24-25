@@ -13,48 +13,40 @@ import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import Range
+from sensor_msgs.msg import Range, Imu
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from tf_transformations import euler_from_quaternion
 from ebot_docking.srv import DockSw  # Import custom service message
 import math, statistics
 
-# Define a class for your ROS2 node
-class MyRobotDockingController(Node):
+import time
+
+class DockingController(Node):
 
     def __init__(self):
-        # Initialize the ROS2 node with a unique name
-        super().__init__('my_robot_docking_controller')
+        super().__init__('docking_server')
 
-        # Create a callback group for managing callbacks
         self.callback_group = ReentrantCallbackGroup()
 
-        # Subscribe to odometry data for robot pose information
         self.odom_sub = self.create_subscription(Odometry, 'odom', self.odometry_callback, 10)
 
-        # Subscribe to ultrasonic sensor data for distance measurements
         self.ultrasonic_rl_sub = self.create_subscription(Range, '/ultrasonic_rl/scan', self.ultrasonic_rl_callback, 10)
-        # Add another one here
 
+        self.ultrasonic_rl_sub = self.create_subscription(Range, '/ultrasonic_rr/scan', self.ultrasonic_rr_callback, 10)
 
-        # Create a ROS2 service for controlling docking behavior, can add another custom service message
+        self.imu_sub = self.create_subscription(Imu, '/imu', self.imu_callback, 10)
+
         self.dock_control_srv = self.create_service(DockSw, 'dock_control', self.dock_control_callback, callback_group=self.callback_group)
 
-        # Create a publisher for sending velocity commands to the robot
-        #
 
-        # Initialize all  flags and parameters here
+        self.twist_publsiher = self.create_publisher(Twist, '/cmd_vel', 10)
+
         self.is_docking = False
-        #         
-        # 
-        # 
-        # 
-        # 
-        # 
+        self.dock_aligned = False
+        self.robot_pose = [0.0, 0.0, 0.0]
 
-        # Initialize a timer for the main control loop
-        self.controller_timer = self.create_timer(0.1, self.controller_loop)
+        # self.controller_timer = self.create_timer(0.1, self.controller_loop)
 
     # Callback function for odometry data
     def odometry_callback(self, msg):
@@ -66,63 +58,83 @@ class MyRobotDockingController(Node):
         _, _, yaw = euler_from_quaternion(orientation_list)
         self.robot_pose[2] = yaw
 
-    # Callback function for the left ultrasonic sensor
+
     def ultrasonic_rl_callback(self, msg):
         self.usrleft_value = msg.range
 
-    # Callback function for the right ultrasonic sensor
-    #
-    #
+    def ultrasonic_rr_callback(self, msg):
+        self.usrright_value = msg.range
 
-    # Utility function to normalize angles within the range of -π to π (OPTIONAL)
-    def normalize_angle(self, angle):
-        
-        pass
-
-    # Main control loop for managing docking behavior
+    def imu_callback(self, msg):
+        self.imu_value = msg
 
     def controller_loop(self):
 
-        # The controller loop manages the robot's linear and angular motion 
-        # control to achieve docking alignment and execution
         if self.is_docking:
-            # ...
-            # Implement control logic here for linear and angular motion
-            # For example P-controller is enough, what is P-controller go check it out !
-            # ...
-            pass
+            if self.angular_dock:
+                prevtime = time.time()
+                while time.time() - prevtime < 2.0 :
+                    twist = Twist()
+                    twist.angular.z = 1.57
+                    self.twist_publsiher.publish(twist)
+                self.twist_publsiher.publish(Twist())
+                q = self.imu_value.orientation
+                error = euler_from_quaternion([q.x, q.y, q.z, q.w])[2] - self.angular_orientation
+                prevtime = time.time()
+                print(error)
+                while time.time() - prevtime < 1.0 and not abs(error) < 0.05:
+                    twist = Twist()
+                    twist.angular.z = -error 
+                    self.twist_publsiher.publish(twist)
+                self.get_logger().info("Orientation Dock Done")
+                self.twist_publsiher.publish(Twist())
+            if self.linear_dock:
+                error = min(self.usrleft_value, self.usrright_value)
+                prevtime = time.time()
+                print(error)
+                while time.time() - prevtime < 1.0 and not error < 0.1:
+                    twist = Twist()
+                    twist.linear.x = -max(error, 1.0)
+                    self.twist_publsiher.publish(twist)
+                self.get_logger().info("Linear Dock Done")
+                self.twist_publsiher.publish(Twist())
+            self.dock_aligned = True
+            self.is_docking = False
+            self.angular_dock = False
+            self.linear_dock = False
+
 
     # Callback function for the DockControl service
     def dock_control_callback(self, request, response):
         # Extract desired docking parameters from the service request
-        #
-        #
+        self.is_docking = True
+        self.dock_aligned = False
 
-        # Reset flags and start the docking process
-        #
-        #
+        self.linear_dock = request.linear_dock
+        self.angular_dock = request.orientation_dock
+        self.angular_orientation = request.orientation
 
-        # Log a message indicating that docking has started
         self.get_logger().info("Docking started!")
 
-        # Create a rate object to control the loop frequency
         rate = self.create_rate(2, self.get_clock())
 
         # Wait until the robot is aligned for docking
-        while not self.dock_aligned:
+        while not self.dock_aligned :
             self.get_logger().info("Waiting for alignment...")
-            rate.sleep()
+            self.controller_loop()
+            # rate.sleep()
 
-        # Set the service response indicating success
         response.success = True
         response.message = "Docking control initiated"
+
+        self.is_docking = False
         return response
 
 # Main function to initialize the ROS2 node and spin the executor
 def main(args=None):
     rclpy.init(args=args)
 
-    my_robot_docking_controller = MyRobotDockingController()
+    my_robot_docking_controller = DockingController()
 
     executor = MultiThreadedExecutor()
     executor.add_node(my_robot_docking_controller)
