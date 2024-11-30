@@ -9,11 +9,13 @@ def generate_launch_description():
     # Get the package share directory
     ebot_description_dir = get_package_share_directory('ebot_description')
     ebot_nav2_dir = get_package_share_directory('ebot_nav2')
+    ur_simulation_gazebo_dir = get_package_share_directory('ur_simulation_gazebo')
+
 
     # Include ebot_gazebo_task2b_launch.py from ebot_description package
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(ebot_description_dir, 'launch', 'ebot_gazebo_task2b_launch.py')
+            os.path.join(ebot_description_dir, 'launch', 'ebot_gazebo_task3b_launch.py')
         )
     )
 
@@ -31,6 +33,20 @@ def generate_launch_description():
         output='screen'
     )
 
+    robotic_arm_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(ur_simulation_gazebo_dir, 'launch', 'spawn_ur5_launch_moveit.launch.py')
+        )
+    )
+
+    # Node for running payload.py
+    tf_aruco_node = Node(
+        package='ur5_control',
+        executable='task1b',
+        name='tf_aruco_node',
+        output='screen'
+    )
+
     # Node for running ebot_docking_boilerplate.py
     docking_node = Node(
         package='ebot_docking',
@@ -44,5 +60,7 @@ def generate_launch_description():
         gazebo_launch,
         payload_node,
         docking_node,
-        naviagtion_launch
+        naviagtion_launch,
+        robotic_arm_launch,
+        tf_aruco_node
     ])

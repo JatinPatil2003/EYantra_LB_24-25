@@ -107,10 +107,14 @@ def detect_aruco(image, depth_image):
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_50)
-    aruco_params = cv2.aruco.DetectorParameters_create()
+    aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+    aruco_params = cv2.aruco.DetectorParameters()
 
     corners, ids, _ = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=aruco_params)
+
+    # detector = cv2.aruco.ArucoDetector(aruco_dict, aruco_params)
+    # # Detect the markers
+    # corners, ids, _ = detector.detectMarkers(gray)
 
     if ids is not None:
         cv2.aruco.drawDetectedMarkers(image, corners, ids)
@@ -145,7 +149,7 @@ def detect_aruco(image, depth_image):
 
             width_aruco_list.append(width)
 
-            cv2.aruco.drawAxis(image, cam_mat, dist_mat, rvecs[i], tvecs[i], 0.1)
+            # cv2.aruco.drawAxis(image, cam_mat, dist_mat, rvecs[i], tvecs[i], 0.1)
 
     return center_aruco_list, distance_from_rgb_list, angle_aruco_list, width_aruco_list, ids
 
@@ -279,24 +283,27 @@ class aruco_tf(Node):
         self.aruco_string_pub.publish(String(data=str(ids)))
             
         for i, marker_id in enumerate(ids):
-            cX, cY = center_aruco_list[i]
-            distance = distance_from_rgb_list[i]
-            quat = angle_aruco_list[i]
+            try:
+                cX, cY = center_aruco_list[i]
+                distance = distance_from_rgb_list[i]
+                quat = angle_aruco_list[i]
 
-            x = distance * (cX - centerCamX) / focalX
-            y = distance * (cY - centerCamY) / focalY
-            z = distance
+                x = distance * (cX - centerCamX) / focalX
+                y = distance * (cY - centerCamY) / focalY
+                z = distance
 
-            transform = TransformStamped()
-            transform.transform.translation.x = x
-            transform.transform.translation.y = y
-            transform.transform.translation.z = z
-            transform.transform.rotation.x = quat[0]
-            transform.transform.rotation.y = quat[1]
-            transform.transform.rotation.z = quat[2]
-            transform.transform.rotation.w = quat[3]
+                transform = TransformStamped()
+                transform.transform.translation.x = x
+                transform.transform.translation.y = y
+                transform.transform.translation.z = z
+                transform.transform.rotation.x = quat[0]
+                transform.transform.rotation.y = quat[1]
+                transform.transform.rotation.z = quat[2]
+                transform.transform.rotation.w = quat[3]
 
-            self.publish_transform(transform, marker_id[0])
+                self.publish_transform(transform, marker_id[0])
+            except:
+                pass
 
         # Optionally, display the image with markers drawn (for debugging)
         cv2.imshow('Aruco Detection', self.cv_image)
