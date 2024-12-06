@@ -13,11 +13,11 @@ class DockService():
         while not self.dock_service.wait_for_service(timeout_sec=1.0):
             self.node.get_logger().info('Waiting for dock_sw service...')
 
-    def dock(self):
+    def dock(self, bool_ori, yaw=0.0):
         req = DockSw.Request()
         req.linear_dock = True
-        req.orientation_dock = True
-        req.orientation = -1.57
+        req.orientation_dock = bool_ori
+        req.orientation = yaw
 
         response = self.dock_service.call(req)
         if response is not None:

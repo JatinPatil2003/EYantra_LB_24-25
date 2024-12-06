@@ -40,6 +40,24 @@ class TF:
         transform.child_frame_id = 'drop'
         self.tf_broadcast.sendTransform(transform=transform)
 
+        try:
+            trans = self.lookup('base_link', 'obj_12')
+            trans.child_frame_id = 'drop_bot'
+            trans.header.frame_id = 'base_link'
+            euler[0] = 0.0
+            euler[1] = 0.0
+            euler[2] = 0.0
+            quat = tf.quaternion_from_euler(*tuple(euler))
+            # print(euler)
+
+            trans.transform.rotation.x = quat[0]
+            trans.transform.rotation.y = quat[1]
+            trans.transform.rotation.z = quat[2]
+            trans.transform.rotation.w = quat[3]
+            trans.transform.translation.z = 0.2
+            self.tf_broadcast.sendTransform(transform=trans)
+        except Exception as e:
+            pass
 
     def lookup(self, to_frame, from_frame):
         try:
@@ -49,8 +67,8 @@ class TF:
             return transform
             
         except Exception as e:
-            self.node.get_logger().error(f"TF lookup error: {e}")
-            return None
+            # self.node.get_logger().error(f"TF lookup error: {e}")
+            return e
 
 
 def transformStampedToMatrix(transform):

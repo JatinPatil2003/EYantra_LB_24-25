@@ -149,7 +149,7 @@ def detect_aruco(image, depth_image):
 
             width_aruco_list.append(width)
 
-            # cv2.aruco.drawAxis(image, cam_mat, dist_mat, rvecs[i], tvecs[i], 0.1)
+            cv2.drawFrameAxes(image, cam_mat, dist_mat, rvecs[i], tvecs[i], 0.1)
 
     return center_aruco_list, distance_from_rgb_list, angle_aruco_list, width_aruco_list, ids
 

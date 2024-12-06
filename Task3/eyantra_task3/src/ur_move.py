@@ -3,6 +3,7 @@ from rclpy.node import Node
 from moveit_msgs.action import MoveGroup
 from moveit_msgs.msg import RobotState
 from geometry_msgs.msg import Pose, TwistStamped
+from control_msgs.msg import JointJog
 from linkattacher_msgs.srv import AttachLink, DetachLink
 
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -29,6 +30,8 @@ class ArmMovement(Node):
 
         self.cmd_vel_publisher = self.create_publisher(TwistStamped, '/servo_node/delta_twist_cmds', 10)
 
+        self.jog_publisher = self.create_publisher(JointJog, '/servo_node/delta_joint_cmds', 10)
+
         self.gripper_control_attach = self.create_client(AttachLink, '/GripperMagnetON')
 
         self.gripper_control_detach = self.create_client(DetachLink, '/GripperMagnetOFF')
@@ -47,6 +50,27 @@ class ArmMovement(Node):
         self.get_logger().info(f"Moving to {{joint_positions: {joint_angles}}}")
         self.moveit2.move_to_configuration(joint_angles)
         self.moveit2.wait_until_executed()
+
+    def move_initial(self):
+        joint_angles = [0.0, -1.79, 1.67, -1.43, -1.58, 3.14]
+        self.get_logger().info(f"Moving to {{joint_positions: {joint_angles}}}")
+        self.moveit2.move_to_configuration(joint_angles)
+        self.moveit2.wait_until_executed()
+
+    def move_joint_jog(self, joint_names, displacement):
+        msg = JointJog()
+
+        msg.header.stamp = self.get_clock().now().to_msg()
+
+        msg.joint_names = joint_names
+        # msg.displacements = displacement
+        msg.velocities = [1.0]  
+        msg.duration = 10.0  
+
+        curr_time = time.time()
+        while(time.time() - curr_time <= 3.0):
+            msg.header.stamp = self.get_clock().now().to_msg()
+            self.jog_publisher.publish(msg)
 
     def move_servo(self, vel):
         curr_time = time.time()

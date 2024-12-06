@@ -1,4 +1,5 @@
 from payload_service.srv import PayloadSW
+from example_interfaces.srv import SetBool
 
 class PayloadService():
     def __init__(self, node):
@@ -6,19 +7,22 @@ class PayloadService():
 
         self.payload_service = self.node.create_client(PayloadSW, '/payload_sw')
 
+        self.passing_service = self.node.create_client(SetBool, '/passing_service')
+
+        while not self.passing_service.wait_for_service(timeout_sec=1.0):
+            self.node.get_logger().info('Waiting for passing_service ...')
+
         while not self.payload_service.wait_for_service(timeout_sec=1.0):
             self.node.get_logger().info('Waiting for payload_sw service...')
 
     def receive_payload(self):
-        req = PayloadSW.Request()
-        req.receive = True
-        req.drop = False
+        req = SetBool.Request()
 
-        response = self.payload_service.call(req)
+        response = self.passing_service.call(req)
         if response is not None:
             return response
         else:
-            self.node.get_logger().info('Payload_sw service call failed')
+            self.node.get_logger().info('Passing service call failed')
             return None
         
     def drop_payload(self):
