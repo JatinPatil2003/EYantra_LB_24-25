@@ -13,7 +13,7 @@ class Servoingervice():
 
         self.twist_publisher = self.node.create_publisher(TwistStamped, '/servo_node/delta_twist_cmds', 10)
 
-        self.detected_aruco_sub = self.node.create_subscription(String, '/detected_aruco', self.aruco_callback, 10)
+        # self.detected_aruco_sub = self.node.create_subscription(String, '/detected_aruco', self.aruco_callback, 10)
 
         # while not self.servo_service.wait_for_service(timeout_sec=1.0):
         #     self.node.get_logger().info('Waiting for servolink service service...')
@@ -24,6 +24,7 @@ class Servoingervice():
     def aruco_callback(self, msg):
         self.aruco_ids = []
         arr = msg.data[1:-1].split('\n')
+        self.node.get_logger().info(f'{msg.data}')
         for id  in arr:
             id = int(id.strip().strip('[]').strip())
             if id not in self.aruco_ids:
@@ -32,6 +33,7 @@ class Servoingervice():
     def activate_servoing(self):
         req = Trigger.Request()
         self.servoing_activator.call_async(req)
+        self.node.get_logger().info(f'Activated Servoing')
 
     def detach_box(self, box_name):
         req = ServoLink.Request()

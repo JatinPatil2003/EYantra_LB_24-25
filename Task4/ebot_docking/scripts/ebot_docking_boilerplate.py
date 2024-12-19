@@ -94,7 +94,7 @@ class DockingController(Node):
                 print(error)
                 while time.time() - prevtime < 1.0 and not error < 0.1:
                     twist = Twist()
-                    twist.linear.x = -max(error, 1.1)
+                    twist.linear.x = -max(error, 0.8)
                     self.twist_publsiher.publish(twist)
                 self.get_logger().info("Linear Dock Done")
                 self.twist_publsiher.publish(Twist())

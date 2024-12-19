@@ -6,6 +6,7 @@ import rclpy
 from rclpy.node import Node
 
 from geometry_msgs.msg import PoseStamped, Quaternion, TwistStamped
+from std_msgs.msg import String
 
 import tf_transformations
 import rclpy
@@ -39,12 +40,15 @@ class MinimalService(Node):
         executor_thread = Thread(target=executor.spin, daemon=True, args=())
         executor_thread.start()
 
-        self.timer = self.create_timer(1.0, self.timer_callback)
+        self.timer = self.node.create_timer(1.0, self.timer_callback)
 
         self.go_drop = False
 
+        self.aruco_ids = []
         self.servoing_client = servoing.Servoingervice(self.node)
         self.tf_utils = tf_tools.TF(self.node)
+        self.detected_aruco_sub = self.create_subscription(String, '/detected_aruco', self.aruco_callback, 10)
+
 
         # if not input('Start Servoing: ') == "":
         self.servoing_client.activate_servoing()
@@ -61,20 +65,31 @@ class MinimalService(Node):
         # self.ur_move_client.move_joint_jog(self.joint_names, self.displacements)
 
     def timer_callback(self):
+        # self.node.get_logger().info(f'{self.aruco_ids}')
         if self.go_drop:
             self.go_drop = False
             time.sleep(0.3)
             go_to(f'drop', self.node, self.servoing_client, self.tf_utils)
 
+    def aruco_callback(self, msg):
+        self.aruco_ids_new = []
+        arr = msg.data[1:-1].split('\n')
+        for id  in arr:
+            id = int(id.strip().strip('[]').strip())
+            if id not in self.aruco_ids_new:
+                self.aruco_ids_new.append(id)
+        if self.aruco_ids_new is not self.aruco_ids:
+            self.aruco_ids = self.aruco_ids_new
+
     def passing_service_callback(self, request, response):
         def update_box_list(done_list, servoing_client):
-            aruco_list =  servoing_client.aruco_ids
+            aruco_list =  self.aruco_ids
             for i in done_list:
                 try:
                     aruco_list.remove(i)
                 except:
                     pass
-            # aruco_list.sort()
+            aruco_list.sort()
             return aruco_list
 
 

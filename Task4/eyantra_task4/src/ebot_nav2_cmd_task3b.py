@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from geometry_msgs.msg import PoseStamped, Quaternion
 
@@ -29,24 +31,29 @@ def main(args=None):
     
 
     # drop_pose = get_pose(navigator, 0.49, -2.45, 0.0)
-    drop_pose = get_pose(navigator, 0.6, -2.4, 3.14)
+    drop_pose = get_pose(navigator, 0.4, -2.48, 3.14)
+    drop_pose_initial = get_pose(navigator, 0.4, -2.32, 3.14)
 
-    # conveyor_1_pose = get_pose(navigator, -4.6, 3.1, 2.0)
+
+    conveyor_1_pose = get_pose(navigator, -4.6, 3.1, 2.0)
     conveyor_2_pose = get_pose(navigator, 2.3, 3.1, 1.57)
 
     starttime = time.time()
     print(f'Start Time: {time.time()}')
 
     node.get_logger().info("Go to Drop Pose")
-    go_to_pose(navigator, drop_pose)
+    go_to_pose(navigator, drop_pose_initial)
     
     docking_client.dock(False)
     print(payload_client.receive_payload())
+    time.sleep(0.5)
 
     node.get_logger().info("Go to Conveyor 2")
     go_to_pose(navigator, conveyor_2_pose)
     docking_client.dock(True, -1.57)
-    time.sleep(0.5)
+    time.sleep(2)
+    print(payload_client.drop_payload())
+    time.sleep(2)
     print(payload_client.drop_payload())
     docking_client.undock()
 
@@ -59,9 +66,11 @@ def main(args=None):
     print(payload_client.receive_payload())
 
     node.get_logger().info("Go to Conveyor 2")
-    go_to_pose(navigator, conveyor_2_pose)
+    go_to_pose(navigator, conveyor_1_pose)
     docking_client.dock(True, -1.57)
-    time.sleep(0.5)
+    time.sleep(2)
+    print(payload_client.drop_payload())
+    time.sleep(2)
     print(payload_client.drop_payload())
     docking_client.undock()
 
@@ -78,7 +87,9 @@ def main(args=None):
     node.get_logger().info("Go to Conveyor 2")
     go_to_pose(navigator, conveyor_2_pose)
     docking_client.dock(True, -1.57)
-    time.sleep(0.5)
+    time.sleep(2)
+    print(payload_client.drop_payload())
+    time.sleep(2)
     print(payload_client.drop_payload())
     docking_client.undock()
 
