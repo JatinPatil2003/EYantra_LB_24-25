@@ -34,9 +34,9 @@ class TF:
         transform.transform.rotation.z = quat[2]
         transform.transform.rotation.w = quat[3]
         self.tf_broadcast.sendTransform(transform=transform)
-        transform.transform.translation.x = 0.6
+        transform.transform.translation.x = 0.35
         transform.transform.translation.y = 0.0
-        transform.transform.translation.z = 0.25
+        transform.transform.translation.z = 0.4
         transform.child_frame_id = 'drop'
         self.tf_broadcast.sendTransform(transform=transform)
 

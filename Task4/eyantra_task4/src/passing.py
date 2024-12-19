@@ -39,6 +39,10 @@ class MinimalService(Node):
         executor_thread = Thread(target=executor.spin, daemon=True, args=())
         executor_thread.start()
 
+        self.timer = self.create_timer(1.0, self.timer_callback)
+
+        self.go_drop = False
+
         self.servoing_client = servoing.Servoingervice(self.node)
         self.tf_utils = tf_tools.TF(self.node)
 
@@ -48,12 +52,19 @@ class MinimalService(Node):
         # initaial_rotate(self.node, self.servoing_client)
         # self.node.get_logger().info("Initial Rotated")  
 
-        self.ur_move_client.move_initial()
+        # self.ur_move_client.move_initial()
+        initaial_rotate(self.node, self.servoing_client)
 
         # self.joint_names = ['shoulder_pan_joint']  # Name of the joint
         # self.displacements = [110 * 3.14159265359 / 180]
 
         # self.ur_move_client.move_joint_jog(self.joint_names, self.displacements)
+
+    def timer_callback(self):
+        if self.go_drop:
+            self.go_drop = False
+            time.sleep(0.3)
+            go_to(f'drop', self.node, self.servoing_client, self.tf_utils)
 
     def passing_service_callback(self, request, response):
         def update_box_list(done_list, servoing_client):
@@ -79,15 +90,20 @@ class MinimalService(Node):
         self.ur_move_client.magnet_on(f'box{id}')
         self.node.get_logger().info("Moving to Drop")
         time.sleep(0.5)
-        self.ur_move_client.move_initial()
+
+        # self.ur_move_client.move_initial()
+        go_to(f'drop', self.node, self.servoing_client, self.tf_utils)
+        time.sleep(0.5)
+
         # time.sleep(2)
         go_to(f'drop_bot', self.node, self.servoing_client, self.tf_utils)
-        time.sleep(1)
         # # move_cmd_vel(0.0, 0.0, -0.15, self.node, self.servoing_client)
         self.node.get_logger().info("Magnet Off")
         self.ur_move_client.magnet_off(f'box{id}')
-        time.sleep(0.3)
-        self.ur_move_client.move_initial()
+        
+        self.go_drop = True
+
+
         
         response.success = True
 
@@ -133,7 +149,7 @@ def go_to(box_name, node, servoing_client, tf_utils):
     translation = (
         transform.transform.translation.x,
         transform.transform.translation.y,
-        transform.transform.translation.z + 0.05,
+        transform.transform.translation.z + 0.03,
     )
     translation_ = translation
     node.get_logger().info("Moving EEF...")
@@ -141,9 +157,9 @@ def go_to(box_name, node, servoing_client, tf_utils):
     while not abs(translation[0]) < 0.04 and not abs(translation[1]) < 0.04 and time.time() - prevtime < 2.0:
     # while not abs(translation[0]) < 0.05 and not abs(translation[1]) < 0.05:
         twist = TwistStamped()
-        twist.twist.linear.x = translation_[0] * 2.2
-        twist.twist.linear.y = translation_[1] * 2.2
-        twist.twist.linear.z = translation_[2] * 2.2
+        twist.twist.linear.x = translation_[0] * 1.5
+        twist.twist.linear.y = translation_[1] * 1.5
+        twist.twist.linear.z = translation_[2] * 1.5
 
         twist.header.stamp = node.get_clock().now().to_msg()
         servoing_client.twist_publisher.publish(twist)
@@ -167,6 +183,45 @@ def go_to(box_name, node, servoing_client, tf_utils):
     servoing_client.twist_publisher.publish(TwistStamped())
     return translation_[1]
 
+
+# def go_to(box_name, node, servoing_client, tf_utils):
+#     transform = tf_utils.lookup("ee", box_name)
+#     translation = (
+#         transform.transform.translation.x,
+#         transform.transform.translation.y,
+#         transform.transform.translation.z + 0.03,
+#     )
+#     translation_ = translation
+#     node.get_logger().info("Moving EEF...")
+#     prevtime = time.time()
+#     while not abs(translation[0]) < 0.04 and not abs(translation[1]) < 0.04 and time.time() - prevtime < 3.0:
+#     # while not abs(translation[0]) < 0.05 and not abs(translation[1]) < 0.05:
+#         twist = TwistStamped()
+#         twist.twist.linear.x = translation_[0]
+#         twist.twist.linear.y = translation_[1]
+#         twist.twist.linear.z = translation_[2]
+
+#         twist.header.stamp = node.get_clock().now().to_msg()
+#         servoing_client.twist_publisher.publish(twist)
+
+        
+
+#         try:
+#             transform = tf_utils.lookup("ee", box_name)
+#             translation = (
+#                 transform.transform.translation.x,
+#                 transform.transform.translation.y,
+#                 transform.transform.translation.z,
+#             )
+#             if abs(translation[0]) < 0.04 or abs(translation[1]) < 0.04:
+#                 node.get_logger().info("Limit Stop EEF...")
+#         except Exception as e:
+#             print(e)
+#             break
+#     # servoing_client.twist_publisher.publish(TwistStamped())
+#     node.get_logger().info("Stopping EEF...")
+#     servoing_client.twist_publisher.publish(TwistStamped())
+#     return translation_[1]
 
 if __name__ == '__main__':
     main()
