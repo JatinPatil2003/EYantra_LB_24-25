@@ -14,8 +14,17 @@ find_package(ament_cmake REQUIRED)
 install(
   DIRECTORY
     launch
+    src
   DESTINATION
     share/${PROJECT_NAME}/
+)
+
+ament_python_install_package(src)
+
+install(PROGRAMS
+  src/passing.py 
+  src/ebot_nav2_cmd_task3b.py 
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

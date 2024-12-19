@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from geometry_msgs.msg import PoseStamped, Quaternion
 
@@ -47,7 +49,7 @@ def main(args=None):
     go_to_pose(navigator, conveyor_2_pose)
     docking_client.dock(True, -1.57)
     print(payload_client.drop_payload())
-    time.sleep(0.5)
+    time.sleep(2)
     print(payload_client.drop_payload())
 
 
