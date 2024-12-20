@@ -23,7 +23,7 @@ ament_python_install_package(src)
 
 install(PROGRAMS
   src/passing.py 
-  src/ebot_nav2_cmd_task3b.py 
+  src/ebot_nav2_cmd_task4c.py 
   DESTINATION lib/${PROJECT_NAME}
 )
 

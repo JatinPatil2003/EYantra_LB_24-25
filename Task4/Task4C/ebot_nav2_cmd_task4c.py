@@ -45,16 +45,23 @@ def main(args=None):
     go_to_pose(navigator, drop_pose_initial)
     
     docking_client.dock(False)
-    print(payload_client.receive_payload())
+    response = payload_client.receive_payload()
     time.sleep(0.5)
-
-    node.get_logger().info("Go to Conveyor 2")
-    go_to_pose(navigator, conveyor_2_pose)
+        
+    node.get_logger().info(f"Received Box {response.message}")
+    if int(response.message) % 2 == 0:
+        conveyor = conveyor_1_pose
+        node.get_logger().info("Go to Conveyor 1")
+    else:
+        conveyor = conveyor_2_pose
+        node.get_logger().info("Go to Conveyor 2")
+    
+    go_to_pose(navigator, conveyor)
     docking_client.dock(True, -1.57)
-    time.sleep(2)
-    print(payload_client.drop_payload())
-    time.sleep(2)
-    print(payload_client.drop_payload())
+    time.sleep(1)
+    print(payload_client.drop_payload(f'box{response.message}'))
+    # time.sleep(2)
+    # print(payload_client.drop_payload(f'box{response.message}'))
     docking_client.undock()
 
 # --------------------------------------------
@@ -63,15 +70,23 @@ def main(args=None):
     go_to_pose(navigator, drop_pose)
     
     docking_client.dock(False)
-    print(payload_client.receive_payload())
+    response = payload_client.receive_payload()
+    time.sleep(0.5)
 
-    node.get_logger().info("Go to Conveyor 2")
-    go_to_pose(navigator, conveyor_1_pose)
+    node.get_logger().info(f"Received Box {response.message}")
+    if int(response.message) % 2 == 0:
+        conveyor = conveyor_1_pose
+        node.get_logger().info("Go to Conveyor 1")
+    else:
+        conveyor = conveyor_2_pose
+        node.get_logger().info("Go to Conveyor 2")
+
+    go_to_pose(navigator, conveyor)
     docking_client.dock(True, -1.57)
-    time.sleep(2)
-    print(payload_client.drop_payload())
-    time.sleep(2)
-    print(payload_client.drop_payload())
+    time.sleep(1)
+    print(payload_client.drop_payload(f'box{response.message}'))
+    # time.sleep(2)
+    # print(payload_client.drop_payload(f'box{response.message}'))
     docking_client.undock()
 
 
@@ -82,15 +97,23 @@ def main(args=None):
     go_to_pose(navigator, drop_pose)
     
     docking_client.dock(False)
-    print(payload_client.receive_payload())
+    response = payload_client.receive_payload()
+    time.sleep(0.5)
 
-    node.get_logger().info("Go to Conveyor 2")
-    go_to_pose(navigator, conveyor_2_pose)
+    node.get_logger().info(f"Received Box {response.message}")
+    if int(response.message) % 2 == 0:
+        conveyor = conveyor_1_pose
+        node.get_logger().info("Go to Conveyor 1")
+    else:
+        conveyor = conveyor_2_pose
+        node.get_logger().info("Go to Conveyor 2")
+
+    go_to_pose(navigator, conveyor)
     docking_client.dock(True, -1.57)
-    time.sleep(2)
-    print(payload_client.drop_payload())
-    time.sleep(2)
-    print(payload_client.drop_payload())
+    time.sleep(1)
+    print(payload_client.drop_payload(f'box{response.message}'))
+    # time.sleep(2)
+    # print(payload_client.drop_payload(f'box{response.message}'))
     docking_client.undock()
 
 
